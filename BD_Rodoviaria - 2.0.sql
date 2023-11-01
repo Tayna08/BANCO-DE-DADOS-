@@ -147,4 +147,8 @@ foreign key (id_pas_fk) references Passagem (id_pas)
 
 #INICIE A PARTIR DAQUI SUA LISTA DE EXERCÍCIOS
 
+#Questão 1:
+
+
+
 
