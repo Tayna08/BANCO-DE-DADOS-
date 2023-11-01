@@ -1,7 +1,7 @@
 #Sistema para Empresa de Transporte Rodoviario
 
-create database bd_rodoviaria_2;
-use bd_rodoviaria_2;
+create database bd_Tarefa1;
+use bd_Tarefa1;
 
 create table Estado (
 id_est int not null primary key auto_increment,
@@ -237,7 +237,32 @@ foreign key (id_pas_fk) references Passagem (id_pas)
 
 
 
+#Questão 4
+delimiter $$
+create procedure InserindoDadosSexo (nome varchar(200))
+begin
+declare sexo1 varchar(100);
+set sexo1 = (select nome_sex from Sexo where (nome_sex = nome));
 
+	if(nome <> '') then
+		if(sexo1 <> '') then
+        
+        insert into Sexo values (null, nome);
+        select 'O INSERT FUNCIONOU' as Confirmação;
+        
+        else
+        select 'ESSE SEXO JÁ EXISTE' as Erro;
+        end if;
+
+	else
+    select 'PREENCHA O NOME' as Confirmação;
+    end if;
+end
+$$ delimter ;
+
+call InserindoDadosSexo ('Masculino');
+call InserindoDadosSexo ('Feminino');
+select * from Sexo;
 
 
 
