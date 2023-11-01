@@ -202,13 +202,33 @@ foreign key (id_pas_fk) references Passagem (id_pas)
 
 
 
+insert into estado values (null, 'Amazonas', 'AM');
+insert into cidade values(null, 'Manaus', 1);
+insert into Endereço values (null, 'Rua da alegria', 123, 'Bairro da esperança', '12345-678',1);
 
+select * from endereço;
 
+#3
 
+DELIMITER $$
+CREATE PROCEDURE InserirEndereco(rua_end VARCHAR(300), numero_end INT, bairro_end VARCHAR(100), cep_end VARCHAR(100), id_cid_fk INT)
+BEGIN
+    DECLARE id_cid INT;
+    set id_cid = (select id_cid from cidade where (id_cid = id_cid_fk));
+    
+    IF (id_cid >0) THEN
+    
+        INSERT INTO Endereço (rua_end, numero_end, bairro_end, cep_end, id_cid_fk)
+        VALUES (rua_end, numero_end, bairro_end, cep_end, id_cid_fk);
 
-
-
-
+        SELECT 'Endereço inserido com sucesso!' AS mensagem;
+    ELSE
+        SELECT 'Código de cidade inválido. Insira um código de cidade válido.' AS mensagem;
+    END IF;
+END;
+$$ DELIMITER ;
+CALL InserirEndereco('Rua da alegria', 123, 'Bairro da esperança', '12345-678', 3);
+CALL InserirEndereco('Rua do Tony Stark', 456, 'Bairro Lindo', '98765-432', 2);
 
 
 
