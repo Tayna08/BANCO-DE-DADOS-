@@ -152,3 +152,138 @@ foreign key (id_pas_fk) references Passagem (id_pas)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Questão 5
+delimiter $$
+create procedure InsereTel (celular varchar (100), casa varchar (100), trabalho varchar (100))
+begin
+if(celular <> '') then
+insert into Telefone values (null, celular, casa, trabalho);
+select 'O contato foi adicionado com sucesso!!' as SUCESSO;
+else
+select 'Preencha o campo celular' as ERRO;
+end if;
+end
+$$ delimiter ;
+
+call InsereTel ('(69) 9946-6707', '(69) 9946-6707', '(69) 9946-6707');
+call InsereTel ('(69) 99209-6461', '(69) 99209-6461', '(69) 99209-6461');
+call InsereTel ('(69) 99927-6914', '(69) 99927-6914', '(69) 99927-6914');
+call InsereTel ('(69) 99904-8136', '(69) 99904-8136', '(69) 99904-8136');
+call InsereTel ('(69) 99954-1503', '(69) 99954-1503', '(69) 99954-1503');
+
+select * from Telefone;
