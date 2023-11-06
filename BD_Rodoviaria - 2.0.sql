@@ -187,39 +187,32 @@ foreign key (id_pas_fk) references Passagem (id_pas)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 insert into estado values (null, 'Amazonas', 'AM');
-insert into cidade values(null, 'Manaus', 1);
+insert into estado values (null, 'Rondonia', 'RO');
+
+insert into cidade values(null, 'Ouro Preto', 2);
 insert into Endereço values (null, 'Rua da alegria', 123, 'Bairro da esperança', '12345-678',1);
+insert into Endereço values (null, 'Rua ', 123, 'Bairro', '12345',3);
+insert into Sexo values (null, 'feminino');
+insert into Telefone values (null, '69993697530', '56', '456321');
+insert into Departamento values (null, 'vendedor', 'abc');
 
-select * from endereço;
+insert into Funcionario values(null,'João da Silva', '12345678901', '1234', '1990-01-15', 3000.00, 'Vendedor', 1, 1,3, 1);
 
+
+select * from departamento;
 #3
 
 DELIMITER $$
-CREATE PROCEDURE InserirEndereco(rua_end VARCHAR(300), numero_end INT, bairro_end VARCHAR(100), cep_end VARCHAR(100), id_cid_fk INT)
+CREATE PROCEDURE InserirEndereco(rua VARCHAR(300), numero INT, bairro VARCHAR(100), cep VARCHAR(100), cidade_id INT)
 BEGIN
-    DECLARE id_cid INT;
-    set id_cid = (select id_cid from cidade where (id_cid = id_cid_fk));
+    DECLARE fk_cid_id INT;
+    set fk_cid_id = (select id_cid from Cidade where id_cid = cidade_id);
     
-    IF (id_cid >0) THEN
-    
+    IF (fk_cid_id is not null) THEN
+   
         INSERT INTO Endereço (rua_end, numero_end, bairro_end, cep_end, id_cid_fk)
-        VALUES (rua_end, numero_end, bairro_end, cep_end, id_cid_fk);
+        VALUES (rua, numero, bairro, cep, cidade_id);
 
         SELECT 'Endereço inserido com sucesso!' AS mensagem;
     ELSE
@@ -227,8 +220,16 @@ BEGIN
     END IF;
 END;
 $$ DELIMITER ;
-CALL InserirEndereco('Rua da alegria', 123, 'Bairro da esperança', '12345-678', 3);
-CALL InserirEndereco('Rua do Tony Stark', 456, 'Bairro Lindo', '98765-432', 2);
+CALL InserirEndereco('Rua da alegria', 123, 'Bairro da esperança', '12345-678', 1);
+CALL InserirEndereco('Rua do Tony Stark', 456, 'Bairro Lindo', '98765-432', 1);
+CALL InserirEndereco('Rua do Stark', 456, 'Bairro ', '987432',1);
+CALL InserirEndereco('Stark', 456, 'Bairro a ', '987432',1);
+CALL InserirEndereco('Stark', 456, 'Bairro b', '9872',1);
+CALL InserirEndereco('Stark', 456, 'Bairro c', '7432',1);
+CALL InserirEndereco('Stark', 456, 'Bairro d', '97432',1);
+CALL InserirEndereco('Stark', 456, 'Bairro e', '8742',1);
+CALL InserirEndereco('Stark', 456, 'Bairro f', '980432',1);
+CALL InserirEndereco('Stark', 456, 'Bairro g', '98792',1);
 
 
 
@@ -237,6 +238,49 @@ CALL InserirEndereco('Rua do Tony Stark', 456, 'Bairro Lindo', '98765-432', 2);
 
 
 
+#8
+DELIMITER $$
+CREATE PROCEDURE InserirFuncionario(nome VARCHAR(200), cpf VARCHAR(20), rg VARCHAR(20), datanasc DATE, salario DOUBLE, funcao VARCHAR(50), sexo_id INT, dep_id INT, end_id INT, telefone_id INT)
+BEGIN
+    DECLARE fk_end INT;
+    DECLARE fk_sex INT;
+    DECLARE fk_tel INT;
+    DECLARE fk_dep INT;
+
+    SET fk_end = (select id_end from Endereço where id_end = end_id);
+    SET fk_sex = (select id_sex from Sexo where id_sex = sexo_id);
+    SET fk_tel = (select id_tel from Telefone where id_tel = telefone_id);
+    SET fk_dep = (select id_dep from Departamento where id_dep = dep_id);
+
+		 IF (fk_end is not null) THEN
+			 IF (fk_sex is not null) THEN
+				 IF (fk_tel  is not null) THEN
+					 IF (fk_dep is not null) THEN
+						 IF (funcao = 'Vendedor' AND fk_dep =!1) THEN
+                      INSERT INTO Funcionario (nome_func, cpf_func, rg_func, datanasc_func, salário_func, função_func, id_sex_fk, id_dep_fk, id_end_fk, id_tel_fk)
+					  VALUES (nome, cpf, rg, datanasc, salario, funcao, sexo_id, dep_id, end_id, telefone_id);
+                        else
+					   INSERT INTO Funcionario (nome_func, cpf_func, rg_func, datanasc_func, salário_func, função_func, id_sex_fk, id_dep_fk, id_end_fk, id_tel_fk)
+					   VALUES (nome, cpf, rg, datanasc, salario, funcao, sexo_id, dep_id, end_id, telefone_id);
+                       end if;
+                     else
+                      SELECT 'Código de Departamento inválido. Insira um código de Departamento válido.' AS mensagem;
+					end if;
+				else
+                    SELECT 'Código de Telefone inválido. Insira um código de Telefone válido.' AS mensagem;
+				end if;
+			else
+				SELECT 'Código de Sexo inválido. Insira um código de Sexo válido.' AS mensagem;
+			end if;
+		else
+			 SELECT 'Código de Endereço inválido. Insira um código de Endereço válido.' AS mensagem;
+		end if;
+END;
+$$ DELIMITER ;
+CALL InserirFuncionario('João da Silva', '12345678901', '1234', '1990-01-15', 3000.00, 'Vendedor', 1, 1, 3, 1);  
+CALL InserirFuncionario('João da Silva', '12345678901', '1234', '1990-01-15', 3000.00, 'Vendedor', 1, 2, 5, 1);  
+
+select *from funcionario;
 
 
 
