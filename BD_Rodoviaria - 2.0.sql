@@ -149,17 +149,84 @@ foreign key (id_pas_fk) references Passagem (id_pas)
 
 #Questão 1:
 
+delimiter $$
+create procedure InserirEstado (nome varchar(300), sigla varchar(300))
+begin
+    declare InserirEstado int;
+    set InserirEstado = (select nome_est from Estado where (nome_est = nome));
+  
+  if InserirEstado = 0 then
+   insert into Estado (nome_est, sigla_est) values (nome_est, sigla_est); 
+   
+    select 'O Registro foi inserido com sucesso!' as Confirmacao;
+    
+ else
+ 
+    select 'Já contém um estado com esse nome. Insira um nome de estado válido!' as Alerta;
+    
+ end if;
+ 
+end;
+ 
+$$ delimiter ;
+    
+call InserirEstado('Rondônia', 'RO');
+call InserirEstado('Mato Grosso', 'MT');
+call InserirEstado('Acre', 'AC');
+call InserirEstado('Amazonas', 'AM');
+call InserirEstado('Mato Grosso do Sul', 'MS');
+
+select * from Estado;
 
 
+#Questão 6:
 
+delimiter $$
+create procedure InserirCliente (nome varchar(300), estado_civil varchar(300), cpf varchar(300), rg varchar(300), data_nascimento date, fk_sex int, fk_end int, fk_tel int)
+begin
+declare id_end int;
+declare id_sex int;
+declare id_tel int;
 
+set id_end = (select id_end from Endereço where (id_end = id_end_fk));
+set id_sex = (select id_sex from Sexo where (id_sex = id_sex_fk));
+set id_tel = (select id_tel from Telefone where (id_tel = id_tel_fk));
 
+if (id_end > 0) then
+   if (id_sex > 0) then
+      if (id_tel > 0) then
+ insert into Cliente values (nome_cli, estadocivil_cli, cpf_cli, rg_cli, datanasc_cli, id_sex_fk, id_end_fk, id_tel_fk);
+ 
+select concat('O Cliente', nome, 'foi salvo com sucesso!') as Confirmacao;
+else
+  select 'O campo NOME é obrigatório!' as Alert;
+end if;
 
+select concat('O Endereco_FK', id_end, 'Foi salvo com sucesso!') as Confirmacao;
+else
+  select 'A FK informada não existe na tabela Endereço!' as Alerta;
+end if;
 
+select concat('O Sexo_FK', id_sex, 'Foi salvo com sucesso!') as Confirmacao;
+else
+  select 'A FK informada não existe na tabela Sexo!' as Alerta;
+end if;
+end;
 
+select concat('O Telefone_FK', id_tel, 'Foi salvo com sucesso!') as Confirmacao;
+else
+  select 'A FK informada não existe na tabela Telefone!' as Alerta;
+end if;
 
+$$ delimiter ;
 
+Call InserirCliente('Bruce Banner', 'Casado', '111.111.111-11', '5465489', '20-06-1987', 1, 1, 1);
+Call InserirCliente('Rodrigo Hilbert', 'Casado', '111.111.111-22','8429473', '30-07-1982', 2, 2, 2); 
+Call InserirCliente('Tiago Lacerda', 'Casado', '111.111.111-33', '8429384', '29-09-1998', 3, 3, 3);
+Call InserirCliente('Tom Cruise', 'Solteiro', '222.222.222-88', '8293847', '24-01-1970', 4, 4, 4);
+Call InserirCliente('Marcos Araujo de Souza', 'Casado', '522.222.153-15', '8923942', '28-01-1980', 5, 5, 5);
 
+select * from Cliente;
 
 
 
